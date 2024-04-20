@@ -20,7 +20,7 @@ FunctionalTest_suite = unittest.TestSuite([add_to_cart_tests, go_to_checkout_tes
 MasterTest_suite = unittest.TestSuite([login_tests, signup_tests, add_to_cart_tests, go_to_checkout_tests])
 
 # Run the test suite
-# unittest.TextTestRunner().run(SanityTest_suite)
+unittest.TextTestRunner().run(SanityTest_suite)
 # unittest.TextTestRunner().run(FunctionalTest_suite)
-unittest.TextTestRunner(verbosity=2).run(MasterTest_suite)
+# unittest.TextTestRunner(verbosity=2).run(MasterTest_suite)
 
