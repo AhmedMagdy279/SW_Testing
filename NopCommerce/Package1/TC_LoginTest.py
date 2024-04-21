@@ -16,6 +16,14 @@ class LoginTest(unittest.TestCase):
         self.__driver = webdriver.Firefox()
         self.__driver.get("https://demo.nopcommerce.com/login?returnUrl=%2F")
         self.__sheet = SheetsAutomation('../Test_Suites/TC_LoginTest_Report.xlsx')
+        self.Email_R = TC_Data['Email']['row']
+        self.Email_C = TC_Data['Email']['row']
+        self.Pass_R = TC_Data['Password']['row']
+        self.Pass_C = TC_Data['Password']['row']
+        self.ACT_R = TC_Data['Actual']['row']
+        self.ACT_C = TC_Data['Actual']['row']
+        self.PF_R = TC_Data['P/F']['row']
+        self.PF_C = TC_Data['P/F']['row']
 
     def tearDown(self):
         self.__sheet.save()
@@ -23,8 +31,8 @@ class LoginTest(unittest.TestCase):
         self.__driver.quit()
 
     def test_valid_login_by_email(self):  # TC_01
-        email = self.__sheet.read_from_cell(TC_Data['Email']['row'], TC_Data['Email']['col'])
-        password = self.__sheet.read_from_cell(TC_Data['Password']['row'], TC_Data['Password']['col'])
+        email = self.__sheet.read_from_cell(self.Email_R, self.Email_C)
+        password = self.__sheet.read_from_cell(self.Pass_R, self.Pass_C)
         self.__driver.find_element(By.ID, 'Email').send_keys(email)
         self.__driver.find_element(By.ID, 'Password').send_keys(password)
         self.__driver.find_element(By.XPATH, "//button[@class='button-1 login-button']").click()
@@ -33,15 +41,12 @@ class LoginTest(unittest.TestCase):
             if (self.__driver.current_url == "https://demo.nopcommerce.com/"
                     and self.__driver.find_element(By.XPATH, "//a[@class='ico-account']")):
                 self.assertTrue(True)
-            self.__sheet.write_in_cell(
-                TC_Data['Actual']['row'], TC_Data['Actual']['col'], 'Successfully Navigated to Home page')
-            self.__sheet.write_in_cell(
-                TC_Data['P/F']['row'], TC_Data['P/F']['col'], 'Pass')
+            self.__sheet.write_in_cell(self.ACT_R, self.ACT_C,
+                                       'Registration Successful and redirected to Login Page')
+            self.__sheet.write_in_cell(self.PF_R, self.PF_C, 'Pass')
         except:
-            self.__sheet.write_in_cell(
-                TC_Data['Actual']['row'], TC_Data['Actual']['col'], 'Failed to login')
-            self.__sheet.write_in_cell(
-                TC_Data['P/F']['row'], TC_Data['P/F']['col'], 'Fail')
+            self.__sheet.write_in_cell(self.ACT_R, self.ACT_C, 'Failed to login')
+            self.__sheet.write_in_cell(self.PF_R, self.PF_C, 'Fail')
             self.assertTrue(False)
 
     def test_invalidPassword_login_by_email(self):  # TC_02
@@ -55,18 +60,15 @@ class LoginTest(unittest.TestCase):
             if (self.__driver.current_url == "https://demo.nopcommerce.com/"
                     and self.__driver.find_element(By.XPATH, "//a[@class='ico-account']")):
                 self.assertTrue(True)
-            self.__sheet.write_in_cell(
-                TC_Data['Actual']['row']+1, TC_Data['Actual']['col'], 'Successfully Navigated to Home page')
-            self.__sheet.write_in_cell(
-                TC_Data['P/F']['row']+1, TC_Data['P/F']['col'], 'Pass')
+            self.__sheet.write_in_cell(self.ACT_R+1, self.ACT_C, 'Successfully Navigated to Home page')
+            self.__sheet.write_in_cell(self.PF_R+1, self.PF_C, 'Pass')
         except:
             if (self.__driver.current_url == "https://demo.nopcommerce.com/login?returnurl=%2F"
-                    and self.__driver.find_element(By.XPATH, "//div[@class='message-error validation-summary-errors']")):
+                    and self.__driver.find_element(By.XPATH,
+                                                   "//div[@class='message-error validation-summary-errors']")):
                 self.assertTrue(False)
-            self.__sheet.write_in_cell(
-                TC_Data['Actual']['row']+1, TC_Data['Actual']['col'], 'Failed to login')
-            self.__sheet.write_in_cell(
-                TC_Data['P/F']['row']+1, TC_Data['P/F']['col'], 'Fail')
+            self.__sheet.write_in_cell(self.ACT_R+1, TC_Data['Actual']['col'], 'Failed to login')
+            self.__sheet.write_in_cell(self.PF_R+1, self.PF_C, 'Fail')
 
     def test_invalidEmail_login_by_email(self):  # TC_03
         email = self.__sheet.read_from_cell(TC_Data['Email']['row']+2, TC_Data['Email']['col'])
@@ -79,19 +81,15 @@ class LoginTest(unittest.TestCase):
             if (self.__driver.current_url == "https://demo.nopcommerce.com/"
                     and self.__driver.find_element(By.XPATH, "//a[@class='ico-account']")):
                 self.assertTrue(True)
-            self.__sheet.write_in_cell(
-                TC_Data['Actual']['row']+2, TC_Data['Actual']['col'], 'Successfully Navigated to Home page')
-            self.__sheet.write_in_cell(
-                TC_Data['P/F']['row']+2, TC_Data['P/F']['col'], 'Pass')
+            self.__sheet.write_in_cell(self.ACT_R+2, self.ACT_C, 'Successfully Navigated to Home page')
+            self.__sheet.write_in_cell(self.PF_R+2, self.PF_C, 'Pass')
         except:
             if (self.__driver.current_url == "https://demo.nopcommerce.com/login?returnurl=%2F"
                     and self.__driver.find_element(By.XPATH,
                                                    "//div[@class='message-error validation-summary-errors']")):
                 self.assertTrue(False)
-            self.__sheet.write_in_cell(
-                TC_Data['Actual']['row']+2, TC_Data['Actual']['col'], 'Failed to login')
-            self.__sheet.write_in_cell(
-                TC_Data['P/F']['row']+2, TC_Data['P/F']['col'], 'Fail')
+            self.__sheet.write_in_cell(self.ACT_R+2, self.ACT_C, 'Failed to login')
+            self.__sheet.write_in_cell(self.PF_R+2, self.PF_C, 'Fail')
 
 
 if __name__ == '__main__':
