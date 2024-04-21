@@ -1,35 +1,34 @@
 import unittest
+import os
+import sys
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from Test_Suites.SheetsAutomation import SheetsAutomation
-
-TC_Data = {'First': {'row': 2, 'col': 3},
-           'Last': {'row': 2, 'col': 4},
-           'Email': {'row': 2, 'col': 5},
-           'Password': {'row': 2, 'col': 6},
-           'Actual': {'row': 2, 'col': 8},
-           'P/F': {'row': 2, 'col': 9},
-           'Comments': {'row': 2, 'col': 10},
-           }
+from TestBase.TC_Data import TC1_Data
+from pathlib import Path
+parent_folder = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(parent_folder)
+TB_Path = os.path.join(Path(parent_folder).parent.absolute(), "TestBase")
 
 
 class SignupTest(unittest.TestCase):
     def setUp(self):
         self.__driver = webdriver.Firefox()
         self.__driver.get("https://demo.nopcommerce.com/register?returnUrl=%2Flogin")
-        self.__sheet = SheetsAutomation('../Test_Suites/TC_SignupTest_Report.xlsx')
-        self.FName_R = TC_Data['First']['row']
-        self.FName_C = TC_Data['First']['col']
-        self.LName_R = TC_Data['Last']['row']
-        self.LName_C = TC_Data['Last']['col']
-        self.Email_R = TC_Data['Email']['row']
-        self.Email_C = TC_Data['Email']['col']
-        self.Pass_R = TC_Data['Password']['row']
-        self.Pass_C = TC_Data['Password']['col']
-        self.ACT_R = TC_Data['Actual']['row']
-        self.ACT_C = TC_Data['Actual']['col']
-        self.PF_R = TC_Data['P/F']['row']
-        self.PF_C = TC_Data['P/F']['col']
+        excel_path = os.path.join(TB_Path, "TC_SignupTest_Report.xlsx")
+        self.__sheet = SheetsAutomation(excel_path)
+        self.FName_R = TC1_Data['First']['row']
+        self.FName_C = TC1_Data['First']['col']
+        self.LName_R = TC1_Data['Last']['row']
+        self.LName_C = TC1_Data['Last']['col']
+        self.Email_R = TC1_Data['Email']['row']
+        self.Email_C = TC1_Data['Email']['col']
+        self.Pass_R = TC1_Data['Password']['row']
+        self.Pass_C = TC1_Data['Password']['col']
+        self.ACT_R = TC1_Data['Actual']['row']
+        self.ACT_C = TC1_Data['Actual']['col']
+        self.PF_R = TC1_Data['P/F']['row']
+        self.PF_C = TC1_Data['P/F']['col']
 
     def tearDown(self):
         self.__sheet.save()
@@ -55,7 +54,7 @@ class SignupTest(unittest.TestCase):
             self.__sheet.write_in_cell(self.ACT_R, self.ACT_C, 'Successfully Navigated to Home page')
             self.__sheet.write_in_cell(self.PF_R, self.PF_C, 'Pass')
         except:
-            self.__sheet.write_in_cell(self.ACT_R, self.ACT_C, 'Failed to login')
+            self.__sheet.write_in_cell(self.ACT_R, self.ACT_C, 'Failed to Sign up')
             self.__sheet.write_in_cell(self.PF_R, self.PF_C, 'Fail')
             self.assertTrue(False)
 
