@@ -7,8 +7,8 @@ TC0_Data = {
 }
 
 TC1_Data = {
-    'First': {'row': 2, 'col': 3},
-    'Last': {'row': 2, 'col': 4},
+    'FName': {'row': 2, 'col': 3},
+    'LName': {'row': 2, 'col': 4},
     'Email': {'row': 2, 'col': 5},
     'Password': {'row': 2, 'col': 6},
     'Actual': {'row': 2, 'col': 8},
