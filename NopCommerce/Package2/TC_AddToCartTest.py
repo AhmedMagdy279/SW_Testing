@@ -2,14 +2,14 @@ import unittest
 import random
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from TestSuite.ResultsAutomationScript import ResultsAutomationScript
+from Test_Suites.SheetsAutomation import SheetsAutomation
 
 
 class AddToCartTest(unittest.TestCase):
     def setUp(self):
         self.__driver = webdriver.Firefox()
         self.__driver.get("https://sso.teachable.com/secure/9521/identity/login/password")
-        self.__sheet = ResultsAutomationScript('../TestSuite/LoginTest_Report.xlsx')
+        self.__sheet = SheetsAutomation('../TestSuite/LoginTest_Report.xlsx')
         self.allItems = self.__driver.find_elements(By.XPATH, "//div[@class='product']")
 
     def tearDown(self):
@@ -26,7 +26,7 @@ class AddToCartTest(unittest.TestCase):
     def test_click_addToCart_multiple_times(self):      # TC_03. Fail from the second time & on
         self.assertTrue(True)
 
-    def test_remove_random_item_from_cart(self):        # TC_04 
+    def test_remove_random_item_from_cart(self):        # TC_04
         self.assertTrue(True)
 
 
