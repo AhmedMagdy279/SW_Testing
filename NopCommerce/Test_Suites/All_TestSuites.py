@@ -8,6 +8,7 @@ from Package2.TC_AddToCartTest import AddToCartTest
 from Package2.TC_CheckOut import CheckoutTest
 
 sys.path.append("./Package1")
+sys.path.append("./Package2")
 sys.path.append("./TestBase")
 
 # Get all tests from LoginTest, SignupTest, AddToCartTest, GoToCheckoutTest
