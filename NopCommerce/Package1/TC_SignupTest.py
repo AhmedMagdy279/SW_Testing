@@ -46,6 +46,31 @@ class SignupTest(unittest.TestCase):
             self.__sheet.write_in_cell(TC1_Data['P/F']['row'], TC1_Data['P/F']['col'], 'Fail')
             self.assertTrue(False)
 
+    def test_invalid_signup(self):  # TC_02
+        f_name = self.__sheet.read_from_cell(TC1_Data['FName']['row'], TC1_Data['FName']['col'])
+        l_name = self.__sheet.read_from_cell(TC1_Data['LName']['row'], TC1_Data['LName']['col'])
+        email = self.__sheet.read_from_cell(TC1_Data['Email']['row'], TC1_Data['Email']['col'])
+        password = self.__sheet.read_from_cell(TC1_Data['Password']['row'], TC1_Data['Password']['col'])
+        self.__driver.find_element(By.ID, 'FirstName').send_keys(f_name)
+        self.__driver.find_element(By.ID, 'LastName').send_keys(l_name)
+        self.__driver.find_element(By.ID, 'Email').send_keys(email)
+        self.__driver.find_element(By.ID, 'Password').send_keys(password)
+        self.__driver.find_element(By.ID, 'ConfirmPassword').send_keys(password)
+        self.__driver.find_element(By.ID, "register-button").click()
+        self.__driver.implicitly_wait(5)
+        try:
+            if (self.__driver.current_url == "https://demo.nopcommerce.com/register?returnurl=%2Flogin"
+                    and self.__driver.find_element(By.XPATH, "//li[text()='The specified email already exists']")):
+                self.assertTrue(True)
+            self.__sheet.write_in_cell(TC1_Data['Actual']['row']+1, TC1_Data['Actual']['col'],
+                                       'Error sign. Email already registered with another account')
+            self.__sheet.write_in_cell(TC1_Data['P/F']['row'], TC1_Data['P/F']['col'], 'Pass')
+        except:
+            if self.__driver.current_url == "https://demo.nopcommerce.com/registerresult/1?returnUrl=/login":
+                self.assertTrue(False)
+            self.__sheet.write_in_cell(TC1_Data['Actual']['row'], TC1_Data['Actual']['col'], 'Unexpectedly Signed up')
+            self.__sheet.write_in_cell(TC1_Data['P/F']['row'], TC1_Data['P/F']['col'], 'Fail')
+
 
 if __name__ == '__main__':
     unittest.main()
