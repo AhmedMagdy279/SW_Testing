@@ -9,7 +9,7 @@ from Test_Suites.SheetsAutomation import SheetsAutomation
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import Select
-from TestBase.TC_Data import TC0_Data
+from TestBase.TC_Data import TC2_Data
 from pathlib import Path
 
 parent_folder = os.path.dirname(os.path.abspath(__file__))
@@ -19,6 +19,7 @@ TB_Path = os.path.join(Path(parent_folder).parent.absolute(), "TestBase")
 # Note: Add-to-Cart Buttons on item card functionality is slow on interacting,
 # it needs double clicks to add single time to cart. I tried different techniques to work around but still the same.
 # techniques tried: (Implicit/Explicit wait, time.sleep, hover-click, scroll down-click, refresh-click)
+
 
 class AddToCartTest(unittest.TestCase):
     def setUp(self):
@@ -35,7 +36,7 @@ class AddToCartTest(unittest.TestCase):
     def test_add_single_item_all_sections(self):  # Comprehensive Testing (might be added later)
         self.assertTrue(True)  # as it will be time-consuming to pick item from 13 pages.
 
-    def test_searchANDadd_item_no_attributes(self):  # TC_02. Search & pick 'HTC One Mini BLue'
+    def test_searchANDadd_item_no_attributes(self):  # TC_01. Search & pick 'HTC One Mini BLue'
         self.__driver.find_element(By.ID, "small-searchterms").send_keys("HTC One")
         self.__driver.find_element(By.XPATH, "//button[text()='Search']").click()
         wait = WebDriverWait(self.__driver, 3)  # Wait for 3 seconds (adjust as needed)
@@ -51,13 +52,21 @@ class AddToCartTest(unittest.TestCase):
         add_to_cart.click()
         add_to_cart.click()     # weird interaction that item has to be clicked twice after search to act, although it's
                                 # clickable.
-        success_notification = wait.until(
-            EC.presence_of_element_located((By.XPATH, "//div[@class ='bar-notification success']"))
-        )
-        # Assert success based on notification presence
-        self.assertTrue(success_notification.is_displayed(), "Success notification not found")
+        try:
+            success_notification = wait.until(EC.presence_of_element_located((By.XPATH, "//div[@class ='bar-notification success']")))
+            self.assertTrue(True)
+            self.__sheet.write_in_cell(TC2_Data['Actual']['row'], TC2_Data['Actual']['col'],
+                                   'Notification item added successfully')
+            self.__sheet.write_in_cell(TC2_Data['P/F']['row'], TC2_Data['P/F']['col'], 'Pass')
+            self.__sheet.write_in_cell(TC2_Data['Comments']['row'], TC2_Data['Comments']['col'],
+                                       "Abnormal behavior from the button, it has to be clicked twice after search to act, "
+                                       "although it's clickable.")
+        except:
+            self.__sheet.write_in_cell(TC2_Data['Actual']['row'], TC2_Data['Actual']['col'],'Item is not added')
+            self.__sheet.write_in_cell(TC2_Data['P/F']['row'], TC2_Data['P/F']['col'], 'Fail')
+            self.assertTrue(False)
 
-    def test_add_item_with_attributes(self):  # TC_03
+    def test_add_item_with_attributes(self):  # TC_02
         # Picking 'Build your own computer' with the following:
         # 2.2 GHZ Intel Pentium Dual-Core E2200
         # 8 GB RAM, 320 GB HDD
@@ -74,13 +83,23 @@ class AddToCartTest(unittest.TestCase):
         self.__driver.find_element(By.ID, "product_attribute_5_12").click()
         self.__driver.find_element(By.ID, "add-to-cart-button-1").click()
         wait = WebDriverWait(self.__driver, 3)  # Wait for 3 seconds (adjust as needed)
-        success_notification = wait.until(
-            EC.presence_of_element_located((By.XPATH, "//div[@class ='bar-notification success']"))
-        )
-        # Assert success based on notification presence
-        self.assertTrue(success_notification.is_displayed(), "Success notification not found")
 
-    def test_remove_item_from_cart(self):  # TC_04
+        try:
+            success_notification = wait.until(
+                EC.presence_of_element_located((By.XPATH, "//div[@class ='bar-notification success']")))
+            self.assertTrue(True)
+            self.__sheet.write_in_cell(TC2_Data['Actual']['row']+1, TC2_Data['Actual']['col'],
+                                       'Notification item added successfully')
+            self.__sheet.write_in_cell(TC2_Data['P/F']['row']+1, TC2_Data['P/F']['col'], 'Pass')
+            self.__sheet.write_in_cell(TC2_Data['Comments']['row']+1, TC2_Data['Comments']['col'],
+                                       "This TC, the button behaves normally after we clicked the item card first. "
+                                       "Previous TC the click was on the add to cart on the item card itself.")
+        except:
+            self.__sheet.write_in_cell(TC2_Data['Actual']['row']+1, TC2_Data['Actual']['col'], 'Item is not added')
+            self.__sheet.write_in_cell(TC2_Data['P/F']['row']+1, TC2_Data['P/F']['col'], 'Fail')
+            self.assertTrue(False)
+
+    def test_remove_item_from_cart(self):  # TC_04. To be added later
         self.assertTrue(True)
 
 
