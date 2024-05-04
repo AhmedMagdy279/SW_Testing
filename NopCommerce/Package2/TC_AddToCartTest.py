@@ -12,18 +12,19 @@ from selenium.webdriver.support.ui import Select
 from TestBase.TC_Data import TC2_Data
 from pathlib import Path
 
+
 parent_folder = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(parent_folder)
 TB_Path = os.path.join(Path(parent_folder).parent.absolute(), "TestBase")
 
-# Note: Add-to-Cart Buttons on item card functionality is slow on interacting,
-# it needs double clicks to add single time to cart. I tried different techniques to work around but still the same.
-# techniques tried: (Implicit/Explicit wait, time.sleep, hover-click, scroll down-click, refresh-click)
-
 
 class AddToCartTest(unittest.TestCase):
     def setUp(self):
-        self.__driver = webdriver.Firefox()
+        chrome_options = webdriver.ChromeOptions()
+        chrome_options.add_argument("--start-maximized")
+        # chrome_options.add_argument("headless")
+        chrome_options.add_argument("--ignore-certificate-errors")
+        self.__driver = webdriver.Chrome(options=chrome_options)
         self.__driver.get("https://demo.nopcommerce.com/")
         self.__action = ActionChains(self.__driver)
         excel_path = os.path.join(TB_Path, "TC_AddToCartTest_Report.xlsx")
@@ -48,19 +49,15 @@ class AddToCartTest(unittest.TestCase):
         add_to_cart = self.__driver.find_element(By.XPATH,
                                                  "//a[text()='HTC One Mini Blue']/../../div[@class='add-info']/div["
                                                  "@class='buttons']/button[text()='Add to cart']")
-        # self.__action.scroll_by_amount(0, 320).perform()
+        # scroll to allow to click
+        self.__action.scroll_by_amount(0, 200).perform()
         add_to_cart.click()
-        add_to_cart.click()     # weird interaction that item has to be clicked twice after search to act, although it's
-                                # clickable.
         try:
             success_notification = wait.until(EC.presence_of_element_located((By.XPATH, "//div[@class ='bar-notification success']")))
             self.assertTrue(True)
             self.__sheet.write_in_cell(TC2_Data['Actual']['row'], TC2_Data['Actual']['col'],
                                    'Notification item added successfully')
             self.__sheet.write_in_cell(TC2_Data['P/F']['row'], TC2_Data['P/F']['col'], 'Pass')
-            self.__sheet.write_in_cell(TC2_Data['Comments']['row'], TC2_Data['Comments']['col'],
-                                       "Abnormal behavior from the button, it has to be clicked twice after search to act, "
-                                       "although it's clickable.")
         except:
             self.__sheet.write_in_cell(TC2_Data['Actual']['row'], TC2_Data['Actual']['col'],'Item is not added')
             self.__sheet.write_in_cell(TC2_Data['P/F']['row'], TC2_Data['P/F']['col'], 'Fail')
@@ -91,9 +88,6 @@ class AddToCartTest(unittest.TestCase):
             self.__sheet.write_in_cell(TC2_Data['Actual']['row']+1, TC2_Data['Actual']['col'],
                                        'Notification item added successfully')
             self.__sheet.write_in_cell(TC2_Data['P/F']['row']+1, TC2_Data['P/F']['col'], 'Pass')
-            self.__sheet.write_in_cell(TC2_Data['Comments']['row']+1, TC2_Data['Comments']['col'],
-                                       "This TC, the button behaves normally after we clicked the item card first. "
-                                       "Previous TC the click was on the add to cart on the item card itself.")
         except:
             self.__sheet.write_in_cell(TC2_Data['Actual']['row']+1, TC2_Data['Actual']['col'], 'Item is not added')
             self.__sheet.write_in_cell(TC2_Data['P/F']['row']+1, TC2_Data['P/F']['col'], 'Fail')
