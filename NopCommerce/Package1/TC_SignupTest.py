@@ -23,7 +23,7 @@ class SignupTest(unittest.TestCase):
         self.__driver.close()
         self.__driver.quit()
 
-    def test_valid_signup(self):  # TC_01
+    def test01_valid_signup(self):  # TC_01
         f_name = self.__sheet.read_from_cell(TC1_Data['FName']['row'], TC1_Data['FName']['col'])
         l_name = self.__sheet.read_from_cell(TC1_Data['LName']['row'], TC1_Data['LName']['col'])
         email = self.__sheet.read_from_cell(TC1_Data['Email']['row'], TC1_Data['Email']['col'])
@@ -46,7 +46,7 @@ class SignupTest(unittest.TestCase):
             self.__sheet.write_in_cell(TC1_Data['P/F']['row'], TC1_Data['P/F']['col'], 'Fail')
             self.assertTrue(False)
 
-    def test_invalid_signup(self):  # TC_02
+    def test02_invalid_signup(self):  # TC_02
         f_name = self.__sheet.read_from_cell(TC1_Data['FName']['row']+1, TC1_Data['FName']['col'])
         l_name = self.__sheet.read_from_cell(TC1_Data['LName']['row']+1, TC1_Data['LName']['col'])
         email = self.__sheet.read_from_cell(TC1_Data['Email']['row']+1, TC1_Data['Email']['col'])
