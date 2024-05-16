@@ -12,7 +12,6 @@ from selenium.webdriver.support.ui import Select
 from TestBase.TC_Data import TC2_Data
 from pathlib import Path
 
-
 parent_folder = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(parent_folder)
 TB_Path = os.path.join(Path(parent_folder).parent.absolute(), "TestBase")
@@ -53,13 +52,14 @@ class AddToCartTest(unittest.TestCase):
         self.__action.scroll_by_amount(0, 200).perform()
         add_to_cart.click()
         try:
-            success_notification = wait.until(EC.presence_of_element_located((By.XPATH, "//div[@class ='bar-notification success']")))
+            success_notification = wait.until(
+                EC.presence_of_element_located((By.XPATH, "//div[@class ='bar-notification success']")))
             self.assertTrue(True)
             self.__sheet.write_in_cell(TC2_Data['Actual']['row'], TC2_Data['Actual']['col'],
-                                   'Notification item added successfully')
+                                       'Notification item added successfully')
             self.__sheet.write_in_cell(TC2_Data['P/F']['row'], TC2_Data['P/F']['col'], 'Pass')
         except:
-            self.__sheet.write_in_cell(TC2_Data['Actual']['row'], TC2_Data['Actual']['col'],'Item is not added')
+            self.__sheet.write_in_cell(TC2_Data['Actual']['row'], TC2_Data['Actual']['col'], 'Item is not added')
             self.__sheet.write_in_cell(TC2_Data['P/F']['row'], TC2_Data['P/F']['col'], 'Fail')
             self.assertTrue(False)
 
@@ -85,16 +85,72 @@ class AddToCartTest(unittest.TestCase):
             success_notification = wait.until(
                 EC.presence_of_element_located((By.XPATH, "//div[@class ='bar-notification success']")))
             self.assertTrue(True)
-            self.__sheet.write_in_cell(TC2_Data['Actual']['row']+1, TC2_Data['Actual']['col'],
+            self.__sheet.write_in_cell(TC2_Data['Actual']['row'] + 1, TC2_Data['Actual']['col'],
                                        'Notification item added successfully')
-            self.__sheet.write_in_cell(TC2_Data['P/F']['row']+1, TC2_Data['P/F']['col'], 'Pass')
+            self.__sheet.write_in_cell(TC2_Data['P/F']['row'] + 1, TC2_Data['P/F']['col'], 'Pass')
         except:
-            self.__sheet.write_in_cell(TC2_Data['Actual']['row']+1, TC2_Data['Actual']['col'], 'Item is not added')
-            self.__sheet.write_in_cell(TC2_Data['P/F']['row']+1, TC2_Data['P/F']['col'], 'Fail')
+            self.__sheet.write_in_cell(TC2_Data['Actual']['row'] + 1, TC2_Data['Actual']['col'], 'Item is not added')
+            self.__sheet.write_in_cell(TC2_Data['P/F']['row'] + 1, TC2_Data['P/F']['col'], 'Fail')
             self.assertTrue(False)
 
-    def test_remove_item_from_cart(self):  # TC_04. To be added later
-        self.assertTrue(True)
+    def test_add_item_multiple_times(self):  # TC_03 & TC_04
+        # TC_03 implementation: Adding item multiple times
+        self.__driver.find_element(By.XPATH, "//a[text()='HTC One M8 Android L 5.0 Lollipop']").click()
+        self.__driver.implicitly_wait(4)
+        self.__driver.find_element(By.ID, "product_enteredQuantity_18").clear()
+        self.__driver.find_element(By.ID, "product_enteredQuantity_18").send_keys("2")
+        self.__driver.find_element(By.ID, "add-to-cart-button-18").click()
+        time.sleep(1)
+        self.__driver.find_element(By.ID, "add-to-cart-button-18").click()  # item is added 4 times now
+        # TC_04 implementation: checking the items in cart
+        try:
+            time.sleep(1)
+            while 1:
+                self.__driver.find_element(By.XPATH, "//span[@class='close']").click()
+        except:
+            time.sleep(1)
+        self.__driver.find_element(By.XPATH, "//span[@class='cart-label']").click()
+        item = self.__driver.find_element(By.XPATH, "//td/a[text()='HTC One M8 Android L 5.0 Lollipop']"
+                                                    "/../../td[@class='quantity']/div/input")
+        quantity = item.get_attribute("value")
+        if quantity == "4":
+            self.__sheet.write_in_cell(TC2_Data['Actual']['row'] + 2, TC2_Data['Actual']['col'],
+                                       'item quantity added successfully')
+            self.__sheet.write_in_cell(TC2_Data['P/F']['row'] + 2, TC2_Data['P/F']['col'], 'Pass')
+            self.__sheet.write_in_cell(TC2_Data['Actual']['row'] + 3, TC2_Data['Actual']['col'],
+                                       'Follow up cart successfully checked ')
+            self.__sheet.write_in_cell(TC2_Data['P/F']['row'] + 3, TC2_Data['P/F']['col'], 'Pass')
+            self.assertTrue(True)
+        else:
+            self.__sheet.write_in_cell(TC2_Data['Actual']['row'] + 2, TC2_Data['Actual']['col'],
+                                       'Quantity value mismatch')
+            self.__sheet.write_in_cell(TC2_Data['P/F']['row'] + 2, TC2_Data['P/F']['col'], 'Fail')
+            self.__sheet.write_in_cell(TC2_Data['Actual']['row'] + 3, TC2_Data['Actual']['col'],
+                                       'Follow up cart check fail')
+            self.__sheet.write_in_cell(TC2_Data['P/F']['row'] + 3, TC2_Data['P/F']['col'], 'Fail')
+            self.assertTrue(False)
+
+    def test_remove_item_from_cart(self):  # TC_05. To be added later
+        self.__driver.find_element(By.XPATH, "//a[text()='HTC One M8 Android L 5.0 Lollipop']").click()
+        self.__driver.implicitly_wait(4)
+        self.__driver.find_element(By.ID, "add-to-cart-button-18").click()
+        time.sleep(1)
+        self.__driver.find_element(By.XPATH, "//span[@class='close']").click()
+        self.__driver.find_element(By.XPATH, "//span[@class='cart-label']").click()
+        #
+        self.__driver.find_element(By.XPATH, "//td/a[text()='HTC One M8 Android L 5.0 Lollipop']"
+                                             "/../../td[@class='remove-from-cart']/button").click()
+        try:
+            self.__driver.find_element(By.XPATH, "//td/a[text()='HTC One M8 Android L 5.0 Lollipop']")
+            self.__sheet.write_in_cell(TC2_Data['Actual']['row'] + 4, TC2_Data['Actual']['col'],
+                                       'item removal failed')
+            self.__sheet.write_in_cell(TC2_Data['P/F']['row'] + 4, TC2_Data['P/F']['col'], 'Fail')
+            self.assertTrue(False)
+        except:
+            self.__sheet.write_in_cell(TC2_Data['Actual']['row'] + 4, TC2_Data['Actual']['col'],
+                                       'item removal successful')
+            self.__sheet.write_in_cell(TC2_Data['P/F']['row'] + 4, TC2_Data['P/F']['col'], 'Pass')
+            self.assertTrue(True)
 
 
 if __name__ == '__main__':
