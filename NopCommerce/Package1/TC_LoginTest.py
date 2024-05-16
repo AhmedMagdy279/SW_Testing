@@ -17,6 +17,7 @@ class LoginTest(unittest.TestCase):
         self.__driver.get("https://demo.nopcommerce.com/login?returnUrl=%2F")
         excel_path = os.path.join(TB_Path, "TC_LoginTest_Report.xlsx")
         self.__sheet = SheetsAutomation(excel_path)
+        self.__driver.implicitly_wait(10)
 
     def test_valid_login_by_email(self):  # TC_01
         email = self.__sheet.read_from_cell(TC0_Data['Email']['row'], TC0_Data['Email']['col'])
