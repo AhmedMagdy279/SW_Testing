@@ -3,8 +3,7 @@ import unittest
 import sys
 import os
 from selenium import webdriver
-from selenium.webdriver.common.by import By
-from Test_Suites.SheetsAutomation import SheetsAutomation
+from TestSuites.SheetsAutomation import SheetsAutomation
 # from TestBase.TC_Data import TC2_Data
 from pathlib import Path
 parent_folder = os.path.dirname(os.path.abspath(__file__))

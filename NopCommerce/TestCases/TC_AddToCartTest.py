@@ -2,12 +2,10 @@ import time
 import unittest
 import sys
 import os
+from PageObjects.HomePage import HomePage
+from PageObjects.SearchPage import SearchPage
 from selenium import webdriver
-from selenium.webdriver import ActionChains
-from selenium.webdriver.common.by import By
-from Test_Suites.SheetsAutomation import SheetsAutomation
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
+from TestSuites.SheetsAutomation import SheetsAutomation
 from selenium.webdriver.support.ui import Select
 from TestBase.TC_Data import TC2_Data
 from pathlib import Path
@@ -21,46 +19,43 @@ class AddToCartTest(unittest.TestCase):
     def setUp(self):
         chrome_options = webdriver.ChromeOptions()
         chrome_options.add_argument("--start-maximized")
-        # chrome_options.add_argument("headless")
         chrome_options.add_argument("--ignore-certificate-errors")
-        self.__driver = webdriver.Chrome(options=chrome_options)
-        self.__driver.get("https://demo.nopcommerce.com/")
-        self.__action = ActionChains(self.__driver)
+        self.driver = webdriver.Chrome(options=chrome_options)
         excel_path = os.path.join(TB_Path, "TC_AddToCartTest_Report.xlsx")
-        self.__sheet = SheetsAutomation(excel_path)
+        self.sheet = SheetsAutomation(excel_path)
 
     def tearDown(self):
-        self.__sheet.save()
-        self.__driver.quit()
+        self.sheet.save()
+        self.driver.close()
+        self.driver.quit()
 
     def test_add_single_item_all_sections(self):  # Comprehensive Testing (might be added later)
         self.assertTrue(True)  # as it will be time-consuming to pick item from 13 pages.
 
-    def test_searchANDadd_item_no_attributes(self):  # TC_01. Search & pick 'HTC One Mini BLue'
-        self.__driver.find_element(By.ID, "small-searchterms").send_keys("HTC One")
-        self.__driver.find_element(By.XPATH, "//button[text()='Search']").click()
-        wait = WebDriverWait(self.__driver, 3)  # Wait for 3 seconds (adjust as needed)
-        # add_to_cart = wait.until(
-        #     EC.element_to_be_clickable((By.XPATH,
-        #                                 "//a[text()='HTC One Mini Blue']/../../div[@class='add-info']/div["
-        #                                 "@class='buttons']/button[text()='Add to cart']"))
-        # )
-        add_to_cart = self.__driver.find_element(By.XPATH,
-                                                 "//a[text()='HTC One Mini Blue']/../../div[@class='add-info']/div["
-                                                 "@class='buttons']/button[text()='Add to cart']")
-        # scroll to allow to click
-        self.__action.scroll_by_amount(0, 200).perform()
-        add_to_cart.click()
+    def test_searchANDadd_item_no_attributes(self):  # TC_01. Search & pick 'HTC One Mini Blue'
+        # starting at the homepage
+        self.driver.get("https://demo.nopcommerce.com/")
+        # creating object from the homepage model
+        homepage = HomePage(self.driver)
+        # search for the item there first
+        homepage.enter_search_text("HTC One Mini Blue")
+        homepage.click_search_button()
+        time.sleep(2)
+        # we are now redirected to the search page
+        search_page = SearchPage(self.driver)
+        # scroll to allow to click on add to cart
+        search_page.scroll_page(0, 200)
+        search_page.click_on_first_item_add_to_cart()
+        time.sleep(2)
         try:
-            success_notification = wait.until(
-                EC.presence_of_element_located((By.XPATH, "//div[@class ='bar-notification success']")))
+            search_page.get_notification_bar()
             self.assertTrue(True)
-            self.__sheet.write_in_cell(TC2_Data['Actual']['row'], TC2_Data['Actual']['col'],
-                                       'Notification item added successfully')
-            self.__sheet.write_in_cell(TC2_Data['P/F']['row'], TC2_Data['P/F']['col'], 'Pass')
+            self.sheet.write_in_cell(TC2_Data['Actual']['row'], TC2_Data['Actual']['col'],
+                                     'Notification item added successfully')
+            self.sheet.write_in_cell(TC2_Data['P/F']['row'], TC2_Data['P/F']['col'], 'Pass')
         except:
-            self.__sheet.write_in_cell(TC2_Data['Actual']['row'], TC2_Data['Actual']['col'], 'Item is not added')
-            self.__sheet.write_in_cell(TC2_Data['P/F']['row'], TC2_Data['P/F']['col'], 'Fail')
+            self.sheet.write_in_cell(TC2_Data['Actual']['row'], TC2_Data['Actual']['col'], 'Item is not added')
+            self.sheet.write_in_cell(TC2_Data['P/F']['row'], TC2_Data['P/F']['col'], 'Fail')
             self.assertTrue(False)
 
     def test_add_item_with_attributes(self):  # TC_02

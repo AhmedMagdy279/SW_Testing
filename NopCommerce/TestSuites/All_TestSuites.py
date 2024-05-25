@@ -1,15 +1,12 @@
 import unittest
 import sys
-# Package1
-from Package1.TC_LoginTest import LoginTest
-from Package1.TC_SignupTest import SignupTest
-# Package2
-from Package2.TC_AddToCartTest import AddToCartTest
-from Package2.TC_CheckOut import CheckoutTest
 
-sys.path.append("./Package1")
-sys.path.append("./Package2")
-sys.path.append("./TestBase")
+from TestCases.TC_LoginTest import LoginTest
+from TestCases.TC_SignupTest import SignupTest
+from TestCases.TC_AddToCartTest import AddToCartTest
+from TestCases.TC_CheckOut import CheckoutTest
+
+sys.path.append("./TestCases")
 
 # Get all tests from LoginTest, SignupTest, AddToCartTest, GoToCheckoutTest
 login_tests = unittest.TestLoader().loadTestsFromTestCase(LoginTest)
