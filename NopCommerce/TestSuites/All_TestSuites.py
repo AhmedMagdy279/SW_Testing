@@ -15,7 +15,7 @@ add_to_cart_tests = unittest.TestLoader().loadTestsFromTestCase(AddToCartTest)
 go_to_checkout_tests = unittest.TestLoader().loadTestsFromTestCase(CheckoutTest)
 
 # Create a test suite
-SanityTest_suite = unittest.TestSuite([login_tests, signup_tests])
+SanityTest_suite = unittest.TestSuite([signup_tests, login_tests])
 FunctionalTest_suite = unittest.TestSuite([add_to_cart_tests, go_to_checkout_tests])
 MasterTest_suite = unittest.TestSuite([login_tests, signup_tests, add_to_cart_tests, go_to_checkout_tests])
 
