@@ -1,89 +1,88 @@
 import unittest
-import sys
-import os
+from selenium.common import NoSuchElementException
 from PageObjects.LoginPage import LoginPage
 from selenium import webdriver
-from TestSuites.SheetsAutomation import SheetsAutomation
-from TestBase.TC_Data import TC0_Data
+import os
+import sys
 from pathlib import Path
 
 parent_folder = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(parent_folder)
-TB_Path = os.path.join(Path(parent_folder).parent.absolute(), "TestBase")
+TB_Path = os.path.join(Path(parent_folder).parent.absolute(), "Utils")
+sys.path.append(TB_Path)
+from Utils.read_xlsx import XlsxReader
+from Utils.write_xlsx import XlsxWriter
 
 
 class LoginTest(unittest.TestCase):
     def setUp(self):
         self.driver = webdriver.Firefox()
         self.driver.get("https://demo.nopcommerce.com/login?returnUrl=%2F")
-        excel_path = os.path.join(TB_Path, "TC_LoginTest_Report.xlsx")
-        self.sheet = SheetsAutomation(excel_path)
         self.login_page = LoginPage(self.driver)
         self.driver.implicitly_wait(10)
 
     def tearDown(self):
-        self.sheet.save()
         self.driver.close()
         self.driver.quit()
 
     def test_valid_login_by_email(self):  # TC_01
-        email = self.sheet.read_from_cell(TC0_Data['Email']['row'], TC0_Data['Email']['col'])
-        password = self.sheet.read_from_cell(TC0_Data['Password']['row'], TC0_Data['Password']['col'])
-        self.login_page.enter_email(email)
-        self.login_page.enter_password(password)
+        users = XlsxReader.get_login_data()
+        user = users['TC_01']  # get the user for test case TC_01
+        self.login_page.enter_email(user.email)
+        self.login_page.enter_password(user.password)
         self.login_page.click_login()
         self.driver.implicitly_wait(5)
         try:
             error_msg = self.login_page.get_error_message()
             print(error_msg.text)
-            self.sheet.write_in_cell(TC0_Data['Actual']['row'], TC0_Data['Actual']['col'], 'Failed to login')
-            self.sheet.write_in_cell(TC0_Data['P/F']['row'], TC0_Data['P/F']['col'], 'Fail')
+            XlsxWriter.write_login_test_result('TC_01', error_msg.text, 'Fail',
+                                               'To pass this you need to register the account with same credentials '
+                                               'first')
             self.assertTrue(False)
-        except:
-            self.sheet.write_in_cell(TC0_Data['Actual']['row'], TC0_Data['Actual']['col'],
-                                     'Login Successful and redirected to Signed-in Page')
-            self.sheet.write_in_cell(TC0_Data['P/F']['row'], TC0_Data['P/F']['col'], 'Pass')
+        except NoSuchElementException:
+            # this block will be executed if no error message is found
+            XlsxWriter.write_login_test_result('TC_01', 'login successful', 'Pass', '')
             self.assertTrue(True)
 
     def test_invalidPassword_login_by_email(self):  # TC_02
-        email = self.sheet.read_from_cell(TC0_Data['Email']['row'] + 1, TC0_Data['Email']['col'])
-        password = self.sheet.read_from_cell(TC0_Data['Password']['row'] + 1, TC0_Data['Password']['col'])
-        self.login_page.enter_email(email)
-        self.login_page.enter_password(password)
+        users = XlsxReader.get_login_data()
+        user = users['TC_02']  # get the user for test case TC_01
+        self.login_page.enter_email(user.email)
+        self.login_page.enter_password(user.password)
         self.login_page.click_login()
         self.driver.implicitly_wait(5)
         try:
             error_msg = self.login_page.get_error_message()
             print(error_msg.text)
             self.assertTrue(True)
-            self.sheet.write_in_cell(TC0_Data['Actual']['row'] + 1, TC0_Data['Actual']['col'], 'Failed to login')
-            self.sheet.write_in_cell(TC0_Data['P/F']['row'] + 1, TC0_Data['P/F']['col'], 'Pass')
-
-        except:
+            XlsxWriter.write_login_test_result('TC_02', error_msg.text, 'Pass', '')
+        except NoSuchElementException:
+            # this block will be executed if no error message is found
             self.assertTrue(False)
-            self.sheet.write_in_cell(TC0_Data['Actual']['row'] + 1, TC0_Data['Actual']['col'],
-                                     'Unexpected login with invalid email')
-            self.sheet.write_in_cell(TC0_Data['P/F']['row'] + 1, TC0_Data['P/F']['col'], 'Fail')
+            XlsxWriter.write_login_test_result('TC_01',
+                                               'unexpected login successful with invalid email',
+                                               'Fail',
+                                               '')
 
     def test_invalidEmail_login_by_email(self):  # TC_03
-        email = self.sheet.read_from_cell(TC0_Data['Email']['row'] + 2, TC0_Data['Email']['col'])
-        password = self.sheet.read_from_cell(TC0_Data['Password']['row'] + 2, TC0_Data['Password']['col'])
-        self.login_page.enter_email(email)
-        self.login_page.enter_password(password)
+        users = XlsxReader.get_login_data()
+        user = users['TC_03']  # get the user for test case TC_01
+        self.login_page.enter_email(user.email)
+        self.login_page.enter_password(user.password)
         self.login_page.click_login()
         self.driver.implicitly_wait(5)
         try:
             error_msg = self.login_page.get_error_message()
             print(error_msg.text)
             self.assertTrue(True)
-            self.sheet.write_in_cell(TC0_Data['Actual']['row'] + 2, TC0_Data['Actual']['col'], 'Failed to login')
-            self.sheet.write_in_cell(TC0_Data['P/F']['row'] + 2, TC0_Data['P/F']['col'], 'Pass')
-
-        except:
+            XlsxWriter.write_login_test_result('TC_03', error_msg.text, 'Pass', '')
+        except NoSuchElementException:
+            # this block will be executed if no error message is found
             self.assertTrue(False)
-            self.sheet.write_in_cell(TC0_Data['Actual']['row'] + 2, TC0_Data['Actual']['col'],
-                                     'Unexpected login with invalid email')
-            self.sheet.write_in_cell(TC0_Data['P/F']['row'] + 2, TC0_Data['P/F']['col'], 'Fail')
+            XlsxWriter.write_login_test_result('TC_03',
+                                               'unexpected login successful with invalid email',
+                                               'Fail',
+                                               '')
 
 
 if __name__ == '__main__':
