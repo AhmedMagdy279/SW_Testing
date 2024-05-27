@@ -7,7 +7,7 @@ from PageObjects.SearchPage import SearchPage
 from selenium import webdriver
 from TestSuites.SheetsAutomation import SheetsAutomation
 from selenium.webdriver.support.ui import Select
-from TestBase.TC_Data import TC2_Data
+from Utils.TC_Data import TC2_Data
 from pathlib import Path
 
 parent_folder = os.path.dirname(os.path.abspath(__file__))
