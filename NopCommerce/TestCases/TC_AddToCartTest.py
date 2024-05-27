@@ -5,14 +5,15 @@ import os
 from PageObjects.HomePage import HomePage
 from PageObjects.SearchPage import SearchPage
 from selenium import webdriver
-from TestSuites.SheetsAutomation import SheetsAutomation
-from selenium.webdriver.support.ui import Select
-from Utils.TC_Data import TC2_Data
+from selenium.common import NoSuchElementException
+from PageObjects.ProductPage_BuildYourOwnComputer import BuildYourOwnComputer
+from PageObjects.CartPage import CartPage
 from pathlib import Path
-
 parent_folder = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(parent_folder)
-TB_Path = os.path.join(Path(parent_folder).parent.absolute(), "TestBase")
+TB_Path = os.path.join(Path(parent_folder).parent.absolute(), "Utils")
+sys.path.append(TB_Path)
+from Utils.write_xlsx import XlsxWriter
 
 
 class AddToCartTest(unittest.TestCase):
@@ -21,11 +22,8 @@ class AddToCartTest(unittest.TestCase):
         chrome_options.add_argument("--start-maximized")
         chrome_options.add_argument("--ignore-certificate-errors")
         self.driver = webdriver.Chrome(options=chrome_options)
-        excel_path = os.path.join(TB_Path, "TC_AddToCartTest_Report.xlsx")
-        self.sheet = SheetsAutomation(excel_path)
 
     def tearDown(self):
-        self.sheet.save()
         self.driver.close()
         self.driver.quit()
 
@@ -33,7 +31,7 @@ class AddToCartTest(unittest.TestCase):
         self.assertTrue(True)  # as it will be time-consuming to pick item from 13 pages.
 
     def test_searchANDadd_item_no_attributes(self):  # TC_01. Search & pick 'HTC One Mini Blue'
-        # starting at the homepage
+        # Starting from the homepage
         self.driver.get("https://demo.nopcommerce.com/")
         # creating object from the homepage model
         homepage = HomePage(self.driver)
@@ -50,101 +48,69 @@ class AddToCartTest(unittest.TestCase):
         try:
             search_page.get_notification_bar()
             self.assertTrue(True)
-            self.sheet.write_in_cell(TC2_Data['Actual']['row'], TC2_Data['Actual']['col'],
-                                     'Notification item added successfully')
-            self.sheet.write_in_cell(TC2_Data['P/F']['row'], TC2_Data['P/F']['col'], 'Pass')
-        except:
-            self.sheet.write_in_cell(TC2_Data['Actual']['row'], TC2_Data['Actual']['col'], 'Item is not added')
-            self.sheet.write_in_cell(TC2_Data['P/F']['row'], TC2_Data['P/F']['col'], 'Fail')
+            XlsxWriter.write_add_to_cart_test_result('TC_01', 'Item added successfully', 'Pass', '')
+        except NoSuchElementException:
+            XlsxWriter.write_add_to_cart_test_result('TC_01', 'Item is not added', 'Fail', '')
             self.assertTrue(False)
 
     def test_add_item_with_attributes(self):  # TC_02
+        # Starting from the Product Page (Focused on specific kind of product pages)
+        self.driver.get("https://demo.nopcommerce.com/build-your-own-computer")
+        # creating obj from the product page
+        product_page = BuildYourOwnComputer(self.driver)
         # Picking 'Build your own computer' with the following:
         # 2.2 GHZ Intel Pentium Dual-Core E2200
-        # 8 GB RAM, 320 GB HDD
+        product_page.select_processor_attribute_by_text("2.5 GHz Intel Pentium Dual-Core E2200 [+$15.00]")
+        # 4 GB RAM, 320 GB HDD
+        product_page.select_ram_attribute_by_text("4GB [+$20.00]")
+        product_page.select_hdd_option('320GB')
         # Vista Home, MS Office + Total Commander
-        self.__driver.find_element(By.XPATH, "//a[text()='Build your own computer']").click()
-        drp_dwn = Select(self.__driver.find_element(By.ID, "product_attribute_1"))
-        drp_dwn.select_by_visible_text("2.5 GHz Intel Pentium Dual-Core E2200 [+$15.00]")
-        drp_dwn = Select(self.__driver.find_element(By.ID, "product_attribute_2"))
-        drp_dwn.select_by_visible_text("8GB [+$60.00]")
-        self.__driver.find_element(By.ID, "product_attribute_3_6").click()
-        self.__driver.find_element(By.ID, "product_attribute_4_8").click()
-        if not self.__driver.find_element(By.ID, "product_attribute_4_8").is_selected():
-            self.__driver.find_element(By.ID, "product_attribute_4_8").click()
-        self.__driver.find_element(By.ID, "product_attribute_5_12").click()
-        self.__driver.find_element(By.ID, "add-to-cart-button-1").click()
-        wait = WebDriverWait(self.__driver, 3)  # Wait for 3 seconds (adjust as needed)
-
+        product_page.select_os_option('Vista Home')
+        product_page.set_addon_checkboxes(ms_office=True, adobe_reader=False, total_commander=True)
+        time.sleep(2)
         try:
-            success_notification = wait.until(
-                EC.presence_of_element_located((By.XPATH, "//div[@class ='bar-notification success']")))
+            product_page.get_notification_bar()
             self.assertTrue(True)
-            self.__sheet.write_in_cell(TC2_Data['Actual']['row'] + 1, TC2_Data['Actual']['col'],
-                                       'Notification item added successfully')
-            self.__sheet.write_in_cell(TC2_Data['P/F']['row'] + 1, TC2_Data['P/F']['col'], 'Pass')
-        except:
-            self.__sheet.write_in_cell(TC2_Data['Actual']['row'] + 1, TC2_Data['Actual']['col'], 'Item is not added')
-            self.__sheet.write_in_cell(TC2_Data['P/F']['row'] + 1, TC2_Data['P/F']['col'], 'Fail')
+            XlsxWriter.write_add_to_cart_test_result('TC_02', 'Item added successfully', 'Pass', '')
+        except NoSuchElementException:
+            XlsxWriter.write_add_to_cart_test_result('TC_01', 'Item is not added', 'Fail', '')
             self.assertTrue(False)
 
-    def test_add_item_multiple_times(self):  # TC_03 & TC_04
-        # TC_03 implementation: Adding item multiple times
-        self.__driver.find_element(By.XPATH, "//a[text()='HTC One M8 Android L 5.0 Lollipop']").click()
-        self.__driver.implicitly_wait(4)
-        self.__driver.find_element(By.ID, "product_enteredQuantity_18").clear()
-        self.__driver.find_element(By.ID, "product_enteredQuantity_18").send_keys("2")
-        self.__driver.find_element(By.ID, "add-to-cart-button-18").click()
+    def test_add_item_twice_and_remove(self):  # TC_03, TC_04 & TC_05
+        # Starting on homepage
+        self.driver.get("https://demo.nopcommerce.com/")
+        homepage = HomePage(self.driver)
+        time.sleep(2)
+        # TC_03 implementation: Adding item multiple times from featured section on homepage
+        homepage.scroll_page(0, 200)
+        homepage.click_add_to_cart_featured_product_htc_one_m8()
         time.sleep(1)
-        self.__driver.find_element(By.ID, "add-to-cart-button-18").click()  # item is added 4 times now
+        homepage.click_add_to_cart_featured_product_htc_one_m8()    # item is added 2 times now
         # TC_04 implementation: checking the items in cart
-        try:
-            time.sleep(1)
-            while 1:
-                self.__driver.find_element(By.XPATH, "//span[@class='close']").click()
-        except:
-            time.sleep(1)
-        self.__driver.find_element(By.XPATH, "//span[@class='cart-label']").click()
-        item = self.__driver.find_element(By.XPATH, "//td/a[text()='HTC One M8 Android L 5.0 Lollipop']"
-                                                    "/../../td[@class='quantity']/div/input")
-        quantity = item.get_attribute("value")
-        if quantity == "4":
-            self.__sheet.write_in_cell(TC2_Data['Actual']['row'] + 2, TC2_Data['Actual']['col'],
-                                       'item quantity added successfully')
-            self.__sheet.write_in_cell(TC2_Data['P/F']['row'] + 2, TC2_Data['P/F']['col'], 'Pass')
-            self.__sheet.write_in_cell(TC2_Data['Actual']['row'] + 3, TC2_Data['Actual']['col'],
-                                       'Follow up cart successfully checked ')
-            self.__sheet.write_in_cell(TC2_Data['P/F']['row'] + 3, TC2_Data['P/F']['col'], 'Pass')
-            self.assertTrue(True)
+        # closing notification bar first
+        homepage.close_notification_bar()
+        homepage.click_shopping_cart()
+        # creating CartPage object
+        cart_page = CartPage(self.driver)
+        time.sleep(2)
+        # check the quantity added
+        quantity = cart_page.get_HTC_one_M8_quantity()
+        if quantity == "2":
+            XlsxWriter.write_add_to_cart_test_result('TC_03', 'item quantity added successfully', 'Pass', '')
+            XlsxWriter.write_add_to_cart_test_result('TC_04', 'Follow up cart successfully checked', 'Pass', '')
         else:
-            self.__sheet.write_in_cell(TC2_Data['Actual']['row'] + 2, TC2_Data['Actual']['col'],
-                                       'Quantity value mismatch')
-            self.__sheet.write_in_cell(TC2_Data['P/F']['row'] + 2, TC2_Data['P/F']['col'], 'Fail')
-            self.__sheet.write_in_cell(TC2_Data['Actual']['row'] + 3, TC2_Data['Actual']['col'],
-                                       'Follow up cart check fail')
-            self.__sheet.write_in_cell(TC2_Data['P/F']['row'] + 3, TC2_Data['P/F']['col'], 'Fail')
+            XlsxWriter.write_add_to_cart_test_result('TC_03', 'Quantity value mismatch', 'Fail', '')
+            XlsxWriter.write_add_to_cart_test_result('TC_04', 'Follow up cart check fail', 'Fail', '')
             self.assertTrue(False)
-
-    def test_remove_item_from_cart(self):  # TC_05. To be added later
-        self.__driver.find_element(By.XPATH, "//a[text()='HTC One M8 Android L 5.0 Lollipop']").click()
-        self.__driver.implicitly_wait(4)
-        self.__driver.find_element(By.ID, "add-to-cart-button-18").click()
-        time.sleep(1)
-        self.__driver.find_element(By.XPATH, "//span[@class='close']").click()
-        self.__driver.find_element(By.XPATH, "//span[@class='cart-label']").click()
-        #
-        self.__driver.find_element(By.XPATH, "//td/a[text()='HTC One M8 Android L 5.0 Lollipop']"
-                                             "/../../td[@class='remove-from-cart']/button").click()
+        # TC_05 implementation: removing items from cart
+        cart_page.remove_HTC_one_M8_from_cart()
         try:
-            self.__driver.find_element(By.XPATH, "//td/a[text()='HTC One M8 Android L 5.0 Lollipop']")
-            self.__sheet.write_in_cell(TC2_Data['Actual']['row'] + 4, TC2_Data['Actual']['col'],
-                                       'item removal failed')
-            self.__sheet.write_in_cell(TC2_Data['P/F']['row'] + 4, TC2_Data['P/F']['col'], 'Fail')
+            # try to check item quantity if still there then it wasn't removed
+            quantity = cart_page.get_HTC_one_M8_quantity()
+            XlsxWriter.write_add_to_cart_test_result('TC_05', 'item removal failed', 'Fail', '')
             self.assertTrue(False)
-        except:
-            self.__sheet.write_in_cell(TC2_Data['Actual']['row'] + 4, TC2_Data['Actual']['col'],
-                                       'item removal successful')
-            self.__sheet.write_in_cell(TC2_Data['P/F']['row'] + 4, TC2_Data['P/F']['col'], 'Pass')
+        except NoSuchElementException:
+            XlsxWriter.write_add_to_cart_test_result('TC_05', 'item removal successful', 'Pass', '')
             self.assertTrue(True)
 
 

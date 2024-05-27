@@ -3,12 +3,10 @@ import unittest
 import sys
 import os
 from selenium import webdriver
-from TestSuites.SheetsAutomation import SheetsAutomation
-# from TestBase.TC_Data import TC2_Data
 from pathlib import Path
 parent_folder = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(parent_folder)
-TB_Path = os.path.join(Path(parent_folder).parent.absolute(), "TestBase")
+TB_Path = os.path.join(Path(parent_folder).parent.absolute(), "Utils")
 
 
 class CheckoutTest(unittest.TestCase):
