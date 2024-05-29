@@ -31,6 +31,14 @@ class RegisterPage:
     def click_register(self):
         self.driver.find_element(*self.register_button).click()
 
+    def enter_all_register_info(self, fname, lname, email, password):
+        self.enter_first_name(fname)
+        self.enter_last_name(lname)
+        self.enter_email(email)
+        self.enter_password(password)
+        self.enter_confirm_password(password)
+        self.click_register()
+
     def get_registration_status(self):
         if self.driver.find_element(*self.register_success):
             return True

@@ -18,6 +18,11 @@ class LoginPage:
     def click_login(self):
         self.driver.find_element(*self.login_button).click()
 
+    def enter_credentials(self, email, password):
+        self.enter_email(email)
+        self.enter_password(password)
+        self.click_login()
+
     def get_error_message(self):
         return self.driver.find_element(By.CSS_SELECTOR, "[class*='error']")
 
