@@ -39,3 +39,16 @@ class XlsxWriter:
                 sheet.cell(row=i, column=6, value=comments)  # write to column 'F'
                 break
         wb.save("../Test_Reports/TC_AddToCartTest_Report.xlsx")
+
+    @staticmethod
+    def write_checkout_test_result(test_case_id, actual, pass_fail, comments):
+        wb = load_workbook("../Test_Reports/TC_CheckOut_Report .xlsx")
+        sheet = wb.active
+
+        for i in range(2, sheet.max_row + 1):
+            if sheet.cell(row=i, column=1).value == test_case_id:
+                sheet.cell(row=i, column=15, value=actual)  # write to column 'O'
+                sheet.cell(row=i, column=16, value=pass_fail)  # write to column 'P'
+                sheet.cell(row=i, column=17, value=comments)  # write to column 'Q'
+                break
+        wb.save("../Test_Reports/TC_CheckOut_Report.xlsx")
