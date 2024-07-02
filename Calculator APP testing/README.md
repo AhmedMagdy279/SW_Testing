@@ -9,7 +9,9 @@ In our recent project, we meticulously tested and integrated various modules to 
 🔹 DIO Module: Verified accurate and reliable pin configurations and operations.
 
 🛠️ Phase 2: Integration Tests
+
 In the bottom-up integration approach, we begin by integrating the individual modules with the lowest level of functionality first. As we gradually combine these modules, we verify their interactions and ensure that the system components work seamlessly together.
+
 🔹 LCD Module:
 
 Incorporated pre-tested DIO functions to validate the correct initialization and data handling for display operations.
@@ -21,6 +23,7 @@ Reported and documented any defects found during testing.
 🔹 Keypad Module:
 
 Verified integration of the Keypad module with all prior modules.
+
 Reported and documented any defects found during testing.
 
 🔹 APP Module:
