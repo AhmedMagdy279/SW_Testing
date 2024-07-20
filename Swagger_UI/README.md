@@ -1,36 +1,42 @@
-**Project Title**
+
+
+
+https://github.com/user-attachments/assets/9000b3e0-5b41-4af5-ae3e-bc3e1d9154c4
+
+
+Project Title
 
 Pet store API testing (Swagger UI)
 
-**Description**
+Description
 
 This project demonstrates API testing techniques using both manual and automated approaches. It covers four core functionalities:
 
-* **POST:** Create a new resource (e.g., pet)
-* **PUT:** Update existing resource information (e.g., pet details)
-* **GET:** Retrieve resource details (e.g., pet information)
-* **DELETE:** Remove a resource (e.g., delete a pet)
+* POST: Create a new resource (e.g., pet)
+* PUT: Update existing resource information (e.g., pet details)
+* GET: Retrieve resource details (e.g., pet information)
+* DELETE: Remove a resource (e.g., delete a pet)
 
-**Manual Testing**
+Manual Testing
 
-* **Tool:** Postman
-* **Documentation:**
+* Tool: Postman
+* Documentation:
     * `Manual API Testing.pdf`: Provides a detailed walkthrough of the manual testing process for all four functionalities.
     * `Defect Report.pdf`: Documents any defects encountered during manual testing.
 
-**Test Cases:**
+Test Cases:
 
 For each functionality, the project includes one positive and one negative test case:
 
-* **Positive Test Cases:** Verify successful API interaction under expected conditions.
-* **Negative Test Cases:** Identify and report unexpected API behavior.
+* Positive Test Cases: Verify successful API interaction under expected conditions.
+* Negative Test Cases: Identify and report unexpected API behavior.
 
-**Automated Testing**
+Automated Testing
 
-* **Framework:** Python `requests` library for sending HTTP requests
-* **Test Runner:** Pytest
+* Framework: Python `requests` library for sending HTTP requests
+* Test Runner: Pytest
 
-**Project Structure**
+Project Structure
 
 ```
 .
@@ -46,13 +52,13 @@ For each functionality, the project includes one positive and one negative test 
 └── README.md        # This file (you are here)
 ```
 
-**Running Tests**
+Running Tests
 
 1. Install project dependencies: `pip install -r requirements.txt`
 2. Navigate to the project directory in your terminal.
 3. Run automated tests: `pytest`
 
-**Further Development**
+Further Development
 
 * Expand test coverage to include more functionalities and edge cases.
 * Enhance automation with data-driven testing and parameterization.
