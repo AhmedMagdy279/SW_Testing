@@ -1,3 +1,9 @@
+
+
+
+https://github.com/user-attachments/assets/9000b3e0-5b41-4af5-ae3e-bc3e1d9154c4
+
+
 **Project Title**
 
 Pet store API testing (Swagger UI)
@@ -41,7 +47,8 @@ For each functionality, the project includes one positive and one negative test 
 │   ├── test_web_server_api_endpoints.py  # Tests for web server API endpoints
 │   └── UTILS/
 │       ├── __init__.py  # (Optional: Empty file to treat the directory as a package)
-│       └── utils.py      # Utility functions for testing
+│       ├── utils.py      # Utility functions for testing
+│       └── payload.py    # payload generation
 ├── requirements.txt  # Lists Python dependencies (requests, pytest)
 └── README.md        # This file (you are here)
 ```
